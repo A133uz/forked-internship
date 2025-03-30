@@ -1,0 +1,42 @@
+{% load custom_filters %}
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Список слов</title>
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+</head>
+<body>
+
+    <div class="container">
+        <h1>Список слов</h1>
+        {% if sorted_words %}
+        <table>
+            <thead>
+                <tr>
+                    <th>Слово</th>
+                    <th>Частота слова (TF)</th>
+                    <th>Обратная частота документа(IDF)</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for word in sorted_words %}
+                {% if word in tf_scores%}
+                <tr>
+                    <td>{{ word }}</td>
+                    <td>{{ tf_scores|get_item:word|floatformat:5 }}</td>
+                    <td>{{ idf_scores|get_item:word|floatformat:5 }}</td>
+                </tr>
+                {%endif%}
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <p>Слова не были найдены</p>
+        {% endif %}
+    </div>
+
+</body>
+</html>
