@@ -43,6 +43,9 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'testapp.apps.TestappConfig',
+    'rest_framework',
+    'lesta_api.apps.LestaApiConfig',
+    
 ]
 
 MIDDLEWARE = [
@@ -83,7 +86,14 @@ WSGI_APPLICATION = 'testtask.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': os.getenv("DB_ENGINE", "django.db.backends.sqlite3"),
-        'NAME': BASE_DIR / os.getenv("DB_NAME", "db.sqlite3"),
+        'NAME': str(os.getenv("DB_NAME", "db.sqlite3")),
+        'USER': os.getenv('DB_USER', 'root'),
+        'PASSWORD': os.getenv('DB_PASSWORD', ''),
+        'HOST' : os.getenv('DB_HOST', 'localhost'),
+        'PORT' : os.getenv('DB_PORT', '3306'),
+        'OPTIONS': {
+            'init_command': "SET sql_mode='STRICT_TRANS_TABLES'"
+        }
     },
     
 }
@@ -123,7 +133,7 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
-STATIC_URL = 'testapp/static/'
+STATIC_URL = '/static/'
 
 STATICFILES_DIRS = [
     "testapp/static",
@@ -137,3 +147,13 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # Media files
 MEDIA_URL = "/media/"
 MEDIA_ROOT = BASE_DIR / "media"
+
+#Rest Framework
+REST_FRAMEWORK = {
+    'DEFAULT_RENDERER_CLASSES': [
+        'rest_framework.renderers.JSONRenderer',
+    ],
+    'DEFAULT_PARSER_CLASSES': [
+        'rest_framework.parsers.JSONParser',
+    ],
+}
