@@ -4,10 +4,10 @@
 <html>
 <head>
     <title>Uploaded Files Metrics</title>
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
 </head>
 <body>
     <h1>Uploaded Files and TF-IDF Metrics</h1>
-
         <h2>{{ file.name }}</h2>
         <p>Uploaded: {{ file.uploaded_at }}</p>
         <table border="1">
@@ -22,6 +22,5 @@
             </tr>
             {% endfor %}
         </table>
-
 </body>
 </html>

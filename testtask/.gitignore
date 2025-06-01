@@ -1,4 +1,8 @@
 .env
+/.venv/
 .venv
+.venv/
+/venv/
+
 db.sqlite3
-media\uploads
+media/uploads

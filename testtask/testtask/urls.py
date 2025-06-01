@@ -22,7 +22,8 @@ import os
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('testapp.urls')),
+    path('lesta-api/', include('lesta_api.urls')),
 ]
 
 if settings.DEBUG:
-    urlpatterns += static(settings.STATIC_URL, document_root=os.path.join(BASE_DIR, 'static'))
+    urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

@@ -1,12 +1,13 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework import status
+from rest_framework.decorators import api_view
 from testapp import models, utils
 from .serializers import ProcessedFileSerializer
 
 class UploadFileAPIView(APIView):
-    def get(self, request):
-        return Response({"message": "UploadFile API is up and ready!"}, status=status.HTTP_200_OK)
+    parser_classes = [MultiPartParser, FormParser]
     
     def post(self, request):
         file_obj = request.FILES.get('file')
@@ -24,4 +25,8 @@ class UploadFileAPIView(APIView):
         )
 
         return Response(ProcessedFileSerializer(processed).data, status=status.HTTP_201_CREATED)
+    
+@api_view(["GET"])
+def display_version(request):
+    return Response({"version" : "1.0"}, status=status.HTTP_200_OK)
 
