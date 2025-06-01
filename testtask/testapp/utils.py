@@ -1,4 +1,5 @@
 from sklearn.feature_extraction.text import TfidfVectorizer
+from .models import UploadedFile, FileMetrics
 import time
 
 def process_file(file_obj):
@@ -21,3 +22,18 @@ def process_file(file_obj):
         "processing_time": round(time.time() - start, 4),
         "word_count": len(words)
     }
+    
+def save_file_with_metrics(file_obj, processed):
+    uploaded = UploadedFile.objects.create(file=file_obj, filename=file_obj.name)
+    
+    metrics = FileMetrics.objects.create(
+        uploaded_file=uploaded,
+        tfidf_data=processed['tfidf_data'],
+        processing_time=processed['processing_time'],
+        word_count=processed['word_count'],
+        max_time_processed=processed.get('max_time_processed'),
+        min_time_processed=processed.get('min_time_processed'),
+        avg_word_count=processed.get('avg_word_count')
+    )
+    return uploaded, metrics
+

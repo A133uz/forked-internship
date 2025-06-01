@@ -3,24 +3,23 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Uploaded Files Metrics</title>
+    <title>Uploaded File Metrics</title>
     <link rel="stylesheet" href="{% static 'css/styles.css' %}">
 </head>
 <body>
-    <h1>Uploaded Files and TF-IDF Metrics</h1>
-        <h2>{{ file.name }}</h2>
-        <p>Uploaded: {{ file.uploaded_at }}</p>
-        <table border="1">
-            <tr>
-                <th>Word</th>
-                <th>TF-IDF Score</th>
-            </tr>
-            {% for word, score in file.tfidf_data.items %}
-            <tr>
-                <td>{{ word }}</td>
-                <td>{{ score }}</td>
-            </tr>
-            {% endfor %}
-        </table>
+    <h1>File: {{ file.filename }}</h1>
+    <h2>TF-IDF Scores</h2>
+    <table border="1">
+        <tr>
+            <th>Word</th>
+            <th>TF-IDF Score</th>
+        </tr>
+        {% for word, score in metrics.tfidf_data.items %}
+        <tr>
+            <td>{{ word }}</td>
+            <td>{{ score }}</td>
+        </tr>
+        {% endfor %}
+    </table>
 </body>
 </html>
