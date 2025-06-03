@@ -8,7 +8,8 @@ __pycache__/
 *.log
 
 # Environment and secrets
-
+.env
+.env*
 
 # Static/media files collected or uploaded in dev
 /staticfiles/
