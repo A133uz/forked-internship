@@ -45,7 +45,7 @@ INSTALLED_APPS = [
     'testapp.apps.TestappConfig',
     'rest_framework',
     'lesta_api',
-    
+    'drf_yasg',
 ]
 
 MIDDLEWARE = [
