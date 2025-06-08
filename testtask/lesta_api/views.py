@@ -22,7 +22,8 @@ from .serializers import (
     StatisticsSerializer,
     PasswordUpdateSerializer,
     RegisterSerializer,
-    UserSerializer
+    UserSerializer,
+    LoginSerializer
     )
 
 from drf_yasg.utils import swagger_auto_schema
@@ -114,7 +115,7 @@ class DocumentViewSet(ViewSet):
     )
     def retrieve(self, request, pk=None):
         doc = get_object_or_404(Document, id=pk, uploaded_by=request.user)
-        doc.file.open('r')
+        doc.file.open()
         content = doc.file.read()
         doc.file.close()
         return Response({"doc_id": pk, "content": content})
@@ -289,7 +290,7 @@ class UserViewSet(ViewSet):
         serializer = PasswordUpdateSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         
-        request.user.set_password(serializer._validated_data['password'])
+        request.user.set_password(serializer.validated_data['password'])
         request.user.save()
         return Response({'msg' : 'Пароль обновлен'}, status=status.HTTP_200_OK)
     
@@ -388,7 +389,7 @@ class LoginView(APIView):
     }
     )
     def post(self, request):
-        serializer = RegisterSerializer(data=request.data)
+        serializer = LoginSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         
         user = authenticate(

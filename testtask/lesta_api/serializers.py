@@ -26,6 +26,10 @@ class RegisterSerializer(serializers.ModelSerializer):
                                         email=validated_data.get('email', '')
                                         )
         return user
+    
+class LoginSerializer(serializers.Serializer):
+    username = serializers.CharField(required=True)
+    password = serializers.CharField(required=True, write_only=True)
 
 class PasswordUpdateSerializer(serializers.ModelSerializer):
     new_pass = serializers.CharField(write_only=True, required=True, validators=[validate_password])

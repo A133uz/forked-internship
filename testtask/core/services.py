@@ -71,9 +71,23 @@ def save_document_with_stats(user, file_obj, collection=None):
         ]
 
     else:
+        # 6. Получаем IDF по коллекции для этих слов
+        idf_values = calculate_idf(None, set(rare_words_tf.keys()))
+
+        # 7. Очищаем старую статистику для этого документа и коллекции
+        Statistics.objects.filter(collection=None, document=document).delete()
+
+        # 8. Сохраняем статистику (TF и IDF) по 50 словам
+        stats_objects = [
+            Statistics(collection=None, document=document, word=word, tf=tf, idf=idf_values.get(word, 0.0))
+            for word, tf in rare_words_tf.items()
+        ]
+        Statistics.objects.bulk_create(stats_objects)
+        
         stats_for_display = [
             {'word': word, 'tf': tf, 'idf': 1.0}  # idf = 1 если коллекции нет
             for word, tf in rare_words_tf.items()
         ]
+        
 
     return document, stats_for_display
