@@ -1,8 +1,34 @@
-version: '3.12.6'
+version: '3.8'
 
 services:
-  django:
-    image: django-docker:0.0.1
-    build: .
+  db:
+    image: mysql:8.0
+    container_name: mysql-server
+    restart: always
+    env_file:
+      - .env
+    environment:
+      MYSQL_ROOT_PASSWORD: dummyrootpassword
+      MYSQL_DATABASE: ${DB_NAME}
+      MYSQL_USER: ${DB_USER}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      - db_data:/var/lib/mysql
     ports:
-      -- "8000:8000"
+      - "3303:3306"   
+
+  web:
+    build: .
+    container_name: lesta-container
+    env_file:
+      - .env
+    depends_on:
+      - db
+    volumes:
+      - ./static:/app/staticfiles
+    ports:
+      - "8000:8000"
+
+volumes:
+  db_data:
+
