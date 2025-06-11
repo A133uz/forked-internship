@@ -1,7 +1,7 @@
-import time
+import time, logging
 from .utils import calculate_idf, calculate_tf
 from .models import Document, Collection, Statistics
-
+logger = logging.getLogger(__name__)
 
 def get_top_rare_words(tf_dict, top_n=50):
     """
@@ -29,6 +29,7 @@ def save_document_with_stats(user, file_obj, collection=None):
     - Добавления документа в коллекцию (если передана)
     - Пересчёта и сохранения статистики (TF/IDF)
     """
+    logger.warning("the func was called")
     start_time = time.time()
     
     # 1. Сохраняем документ
@@ -71,15 +72,13 @@ def save_document_with_stats(user, file_obj, collection=None):
         ]
 
     else:
-        # 6. Получаем IDF по коллекции для этих слов
-        idf_values = calculate_idf(None, set(rare_words_tf.keys()))
-
+        
         # 7. Очищаем старую статистику для этого документа и коллекции
         Statistics.objects.filter(collection=None, document=document).delete()
 
         # 8. Сохраняем статистику (TF и IDF) по 50 словам
         stats_objects = [
-            Statistics(collection=None, document=document, word=word, tf=tf, idf=idf_values.get(word, 0.0))
+            Statistics(collection=None, document=document, word=word, tf=tf, idf=1.0)
             for word, tf in rare_words_tf.items()
         ]
         Statistics.objects.bulk_create(stats_objects)

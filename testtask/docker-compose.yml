@@ -28,6 +28,16 @@ services:
       - ./static:/app/staticfiles
     ports:
       - "8000:8000"
+  
+  frontend-proxy:
+    image: nginx:latest
+    ports:
+      - "8001:8000"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./static:/static:ro
+    depends_on:
+      - django-web
 
 volumes:
   db_data:

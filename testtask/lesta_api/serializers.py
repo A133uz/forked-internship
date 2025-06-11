@@ -81,11 +81,13 @@ class DocumentContentSerializer(serializers.Serializer):
 
 class CollectionSerializer(serializers.ModelSerializer):
     owner = serializers.ReadOnlyField(source='owner.username')
+    name = serializers.CharField(required=False, allow_blank=True)
     documents = DocumentSerializer(many=True, read_only=True)
     documents_ids = serializers.PrimaryKeyRelatedField(
         many=True,
         queryset=Document.objects.all(),
         write_only=True,
+        required=False,
         source='documents'
     )
 
@@ -111,6 +113,10 @@ class CollectionSerializer(serializers.ModelSerializer):
 class StatisticsSerializer(serializers.ModelSerializer):
     document_id = serializers.ReadOnlyField(source='document.id')
     collection_id = serializers.ReadOnlyField(source='collection.id')
+    collection = serializers.PrimaryKeyRelatedField(
+        queryset=Collection.objects.all(),
+        allow_null=True, required=False
+    )
 
     class Meta:
         model = Statistics

@@ -23,7 +23,8 @@ from .serializers import (
     PasswordUpdateSerializer,
     RegisterSerializer,
     UserSerializer,
-    LoginSerializer
+    LoginSerializer,
+    CollectionSerializer
     )
 
 from drf_yasg.utils import swagger_auto_schema
@@ -167,7 +168,8 @@ class DocumentViewSet(ViewSet):
                     "tf": stat.tf,
                     "collections": {}
                 }
-            result[word]["collections"][str(stat.collection.id)] = stat.idf
+            collection_id = str(stat.collection.id) if stat.collection else "none"
+            result[word]["collections"][collection_id] = stat.idf
 
         return Response(result)
    
@@ -217,6 +219,16 @@ class CollectionViewSet(ViewSet):
             return Document.objects.none()
         
         return Collection.objects.filter(owner=self.request.user)
+    
+    def create(self, request):
+        serializer = CollectionSerializer(data=request.data, context={"request" : request})
+        if serializer.is_valid():
+            collection = serializer.save(owner=request.user)
+            documents = self.request.data.get('documents')
+            if documents:
+                collection.documents.set(documents)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def list(self, request):
         collections = self.get_queryset()
