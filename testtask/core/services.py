@@ -1,8 +1,6 @@
 import time, logging
 from .utils import calculate_idf, calculate_tf
 from .models import Document, Collection, Statistics
-logger = logging.getLogger(__name__)
-
 def get_top_rare_words(tf_dict, top_n=50):
     """
     Получить топ N слов с наименьшим TF (наиболее редкие слова в документе)
@@ -29,7 +27,6 @@ def save_document_with_stats(user, file_obj, collection=None):
     - Добавления документа в коллекцию (если передана)
     - Пересчёта и сохранения статистики (TF/IDF)
     """
-    logger.warning("the func was called")
     start_time = time.time()
     
     # 1. Сохраняем документ
