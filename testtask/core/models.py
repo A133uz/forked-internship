@@ -26,7 +26,7 @@ class Statistics(models.Model):
     tf = models.FloatField()  # Term Frequency in the document
     idf = models.FloatField() # Inverse Document Frequency in the collection
     document = models.ForeignKey(Document, on_delete=models.CASCADE, related_name='word_statistics')
-    collection = models.ForeignKey(Collection, on_delete=models.CASCADE, related_name='word_statistics')
+    collection = models.ForeignKey(Collection, on_delete=models.CASCADE, null=True, blank=True, related_name='word_statistics')
 
     class Meta:
         unique_together = ('word', 'document', 'collection')
