@@ -120,6 +120,6 @@ class StatisticsSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Statistics
-        fields = ['id', 'word', 'tf', 'idf', 'document_id', 'collection_id']
+        fields = ['id', 'word', 'tf', 'idf', 'document_id', 'collection_id', 'collection']
         read_only_fields = ['id', 'document_id', 'collection_id']
 

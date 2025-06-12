@@ -229,7 +229,15 @@ class CollectionViewSet(ViewSet):
             return Document.objects.none()
         
         return Collection.objects.filter(owner=self.request.user)
-    
+    @swagger_auto_schema(
+    request_body=CollectionSerializer,
+    responses={
+        201: CollectionSerializer,
+        400: "Bad Request"
+    },
+    operation_summary="Создать новую коллекцию",
+    operation_description="Создает коллекцию с привязкой документов"
+    )
     def create(self, request):
         serializer = CollectionSerializer(data=request.data, context={"request" : request})
         if serializer.is_valid():
@@ -239,7 +247,11 @@ class CollectionViewSet(ViewSet):
                 collection.documents.set(documents)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
+    
+    @swagger_auto_schema(
+    responses={200: openapi.Response(description="Список коллекций с документами")},
+    operation_summary="Получить список коллекций пользователя"
+    )
     def list(self, request):
         collections = self.get_queryset()
         data = [
@@ -249,7 +261,14 @@ class CollectionViewSet(ViewSet):
             } for collection in collections
         ]
         return Response(data)
-
+    
+    @swagger_auto_schema(
+    responses={
+        200: DocumentSerializer(many=True),
+        404: "Not Found"
+    },
+    operation_summary="Получить документы из коллекции"
+    )
     def retrieve(self, request, pk=None):
         collection = get_object_or_404(self.get_queryset(), pk=pk)
         docs = collection.documents.all()
@@ -257,14 +276,36 @@ class CollectionViewSet(ViewSet):
         return Response(serializer.data)
 
     
-
+    @swagger_auto_schema(
+    method='get',
+    responses={200: StatisticsSerializer(many=True)},
+    operation_summary="Получить статистику коллекции"
+    )   
     @action(detail=True, methods=['get'])
     def statistics(self, request, pk=None):
         collection = get_object_or_404(self.get_queryset(), pk=pk)
         stats = Statistics.objects.filter(collection=collection)
         serializer = StatisticsSerializer(stats, many=True)
-        return Response(serializer.data) if serializer.is_valid() else Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
+        return Response(serializer.data) 
+    
+    @swagger_auto_schema(
+    method='post',
+    manual_parameters=[
+        openapi.Parameter('pk', openapi.IN_PATH, description="ID коллекции", type=openapi.TYPE_INTEGER),
+        openapi.Parameter('doc_id', openapi.IN_PATH, description="ID документа", type=openapi.TYPE_INTEGER),
+    ],
+    responses={200: "Документ добавлен", 404: "Not found"},
+    operation_summary="Добавить документ в коллекцию"
+    )
+    @swagger_auto_schema(
+    method='delete',
+    manual_parameters=[
+        openapi.Parameter('pk', openapi.IN_PATH, description="ID коллекции", type=openapi.TYPE_INTEGER),
+        openapi.Parameter('doc_id', openapi.IN_PATH, description="ID документа", type=openapi.TYPE_INTEGER),
+    ],
+    responses={204: "Документ удален", 404: "Not found"},
+    operation_summary="Удалить документ из коллекции"
+    )
     @action(detail=True, methods=['post', 'delete'], url_path='(?P<doc_id>[^/.]+)')
     def modify_document(self, request, pk=None, doc_id=None):
         collection = get_object_or_404(self.get_queryset(), pk=pk)
