@@ -32,13 +32,22 @@ services:
   frontend-proxy:
     image: nginx:latest
     ports:
+<<<<<<< HEAD
       - "8001:8000"
+=======
+      - "8001:80"
+>>>>>>> 848d25b (небольшие изменения в докер композе и nginx)
     volumes:
       - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
       - ./static:/static:ro
     depends_on:
+<<<<<<< HEAD
       - django-web
+=======
+      - web
+>>>>>>> 848d25b (небольшие изменения в докер композе и nginx)
 
 volumes:
   db_data:
+  staticfiles:
 
