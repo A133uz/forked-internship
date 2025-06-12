@@ -8,7 +8,7 @@ from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.exceptions import TokenError
 
-from core.services import save_document_with_stats
+from core.services import save_document_with_stats, encode_document_with_huffman
 from core.models import Collection, Statistics, Document
 
 from django.db.models import Avg, Min, Max
@@ -172,6 +172,16 @@ class DocumentViewSet(ViewSet):
             result[word]["collections"][collection_id] = stat.idf
 
         return Response(result)
+    
+    @action(detail=True, methods=["get"], url_path="huffman")
+    def huffman_encode(self, request, pk=None):
+        document = get_object_or_404(Document, id=pk, uploaded_by=request.user)
+        try:
+            encoded_text = encode_document_with_huffman(document.file)
+        except IOError as e:
+            return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
+        return Response(encoded_text)
    
 class MetricsAPIView(APIView):
     
@@ -253,7 +263,7 @@ class CollectionViewSet(ViewSet):
         collection = get_object_or_404(self.get_queryset(), pk=pk)
         stats = Statistics.objects.filter(collection=collection)
         serializer = StatisticsSerializer(stats, many=True)
-        return Response(serializer.data)
+        return Response(serializer.data) if serializer.is_valid() else Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     @action(detail=True, methods=['post', 'delete'], url_path='(?P<doc_id>[^/.]+)')
     def modify_document(self, request, pk=None, doc_id=None):

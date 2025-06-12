@@ -1,5 +1,5 @@
-import time, logging
-from .utils import calculate_idf, calculate_tf
+import time, re
+from .utils import calculate_idf, calculate_tf, build_huffman_tree, generate_huffman_codes, clean_text
 from .models import Document, Collection, Statistics
 def get_top_rare_words(tf_dict, top_n=50):
     """
@@ -14,9 +14,8 @@ def process_document_file(file_obj):
     Получить слова из файла.
     Например, можно считать текст, разделить по пробелам, очистить от знаков препинания, привести к нижнему регистру.
     """
-    import re
     text = file_obj.read().decode('utf-8')
-    words = re.findall(r'\b\w+\b', text.lower())
+    words = clean_text(text)
     return words
 
 def save_document_with_stats(user, file_obj, collection=None):
@@ -87,3 +86,18 @@ def save_document_with_stats(user, file_obj, collection=None):
         
 
     return document, stats_for_display
+
+def encode_document_with_huffman(doc_file) -> str:
+    try:
+        with doc_file.open(mode='rb') as d:
+            text = d.read().decode('utf-8')
+    except Exception as e:
+        raise IOError(f"Ошибка чтения файла: {str(e)}")
+
+    words = clean_text(text)
+    tf = calculate_tf(words)
+    tree = build_huffman_tree(tf)
+    codes = generate_huffman_codes(tree)
+    encoded_txt = ''.join(codes[word] for word in words if word in codes)
+    
+    return encoded_txt
