@@ -3,23 +3,30 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Uploaded File Metrics</title>
+    <title>TF-IDF</title>
     <link rel="stylesheet" href="{% static 'css/styles.css' %}">
 </head>
 <body>
-    <h1>File: {{ file.filename }}</h1>
-    <h2>TF-IDF Scores</h2>
-    <table border="1">
+    <h1>Статистика по документу {{ document.id }}</h1>
+<table border="1">
+    <thead>
         <tr>
-            <th>Word</th>
-            <th>TF-IDF Score</th>
+            <th>Слово</th>
+            <th>TF</th>
+            <th>IDF</th>
         </tr>
-        {% for word, score in metrics.tfidf_data.items %}
+    </thead>
+    <tbody>
+    {% for item in stats %}
         <tr>
-            <td>{{ word }}</td>
-            <td>{{ score }}</td>
+            <td>{{ item.word }}</td>
+            <td>{{ item.tf|floatformat:4 }}</td>
+            <td>{{ item.idf|floatformat:4 }}</td>
         </tr>
-        {% endfor %}
-    </table>
+    {% empty %}
+        <tr><td colspan="3">Нет статистики</td></tr>
+    {% endfor %}
+    </tbody>
+</table>
 </body>
 </html>

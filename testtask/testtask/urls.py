@@ -24,25 +24,26 @@ from drf_yasg import openapi
 import os
 
 schema_view = get_schema_view(
-    openapi.Info(
-        title="TF-IDF API",
-        default_version='v1.1.0',
-        description="REST API, показывающее tf-idf показатели загруженного документа",
-        terms_of_service="https://www.yourdomain.com/terms/",
-    ),
-    public=True,
-    permission_classes=[permissions.AllowAny],  # Customize as needed
+   openapi.Info(
+      title="TF-IDF App API",
+      default_version='v2.0.0',
+      description="API документация для TF-IDF App",
+      license=openapi.License(name="MIT License"),
+   ),
+   public=True,
+   permission_classes=[permissions.AllowAny,],
 )
+
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('testapp.urls')),
     path('lesta-api/', include('lesta_api.urls')),
     
-    # Swagger/OpenAPI URLs
+    # Swagger & Redoc endpoints
     re_path(r'^swagger(?P<format>\.json|\.yaml)$', schema_view.without_ui(cache_timeout=0), name='schema-json'),
-    path('swagger/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
+    path('docs/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
     path('redoc/', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
-]
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 if settings.DEBUG:
     urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
