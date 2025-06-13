@@ -1,51 +1,55 @@
 FROM python:3.12.6-slim AS builder
 
+# Install system dependencies
 RUN apt-get update && apt-get install -y \
     gcc \
     default-libmysqlclient-dev \
     pkg-config \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
-RUN mkdir /app
-
+# Set working directory
 WORKDIR /app
 
-ENV PYTHONDONTWRITEBYTECODE=1
-ENV PYTHONBUFFERED=1
+# Environment variables
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1
 
-RUN pip install --upgrade pip
-COPY requirements.txt /app/
-RUN pip install --no-cache-dir -r requirements.txt
+# Install Python dependencies
+COPY requirements.txt .
+RUN pip install --upgrade pip && pip install --no-cache-dir -r requirements.txt
+
 
 FROM python:3.12.6-slim
 
+# Install runtime dependencies
 RUN apt-get update && apt-get install -y \
     default-libmysqlclient-dev \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
-RUN useradd -m -r appuser && mkdir /app && chown -R appuser /app
+# Create non-root user
+RUN useradd -m -r appuser
 
-COPY --from=builder /usr/local /usr/local
-COPY --from=builder /app /app
-
-# Set the working directory
+# Set working directory
 WORKDIR /app
- 
-# Copy application code
+
+# Copy Python packages and app from builder
+COPY --from=builder /usr/local /usr/local
+
+# Copy project files and set ownership
 COPY --chown=appuser:appuser . .
- 
-# Set environment variables to optimize Python
-ENV PYTHONDONTWRITEBYTECODE=1
-ENV PYTHONUNBUFFERED=1 
- 
+
+# Set environment variables
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1
+
+# Ensure entrypoint script is executable
+RUN chmod +x /app/entrypoint.prod.sh
+
 # Switch to non-root user
 USER appuser
- 
-# Expose the application port
-EXPOSE 8000 
 
-# Make entry file executable
-RUN chmod +x  /app/entrypoint.prod.sh
- 
-# Start the application using Gunicorn
+# Expose application port
+EXPOSE 8000
+
+# Start app with entrypoint script
 CMD ["/app/entrypoint.prod.sh"]
