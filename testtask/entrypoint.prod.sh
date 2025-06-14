@@ -2,7 +2,10 @@
 
 # Create staticfiles directory and set permissions if it doesn't exist
 mkdir -p /app/staticfiles
+mkdir -p /app/mediafiles
+
 chown -R appuser:appuser /app/staticfiles
+chown -R appuser:appuser /app/mediafiles
 
 # Switch to non-root user
 su appuser -c "

@@ -34,7 +34,8 @@ schema_view = get_schema_view(
    permission_classes=[permissions.AllowAny,],
    patterns=[
        path('lesta-api/', include('lesta_api.urls')),
-   ]
+   ],
+   url="https://lesta-start-tfidf.duckdns.org",
 )
 
 urlpatterns = [
