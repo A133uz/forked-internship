@@ -31,6 +31,8 @@ SECRET_KEY = os.getenv("SECRET_KEY")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv("DEBUG", "False") == "True"
 
+CSRF_TRUSTED_ORIGINS = os.getenv("CSRF_TRUSTED_ORIGINS", "").split(',')
+
 ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "").split(",")
 
 
@@ -191,6 +193,9 @@ SWAGGER_SETTINGS = {
     'DEFAULT_INFO': 'testtask.urls.api_info',
     'DEFAULT_AUTO_SCHEMA_CLASS': 'testtask.schema.CustomAutoSchema',
     'SECURITY_DEFINITIONS': {
+        'Basic' : {
+            'type' : 'basic'
+        },
         'Bearer': {
             'type': 'apiKey',
             'name': 'Authorization',
@@ -199,10 +204,30 @@ SWAGGER_SETTINGS = {
         }
     },
     'USE_SESSION_AUTH': False,
+    'JSON_EDITOR': True,
+    'SUPPORTED_SUBMIT_METHODS': [
+        'get',
+        'post',
+        'put',
+        'delete',
+        'patch'
+    ],
+    'OPERATIONS_SORTER': 'alpha',
+    'TAGS_SORTER': 'alpha',
+    'DOC_EXPANSION': 'none',
+    'DEEP_LINKING': True,
+    'SHOW_EXTENSIONS': True,
+    'DEFAULT_MODEL_RENDERING': 'model',
+}
+
+# ReDoc settings 
+REDOC_SETTINGS = {
+    'LAZY_RENDERING': False,
 }
 
 #CORS Config
 if DEBUG:
     CORS_ALLOW_ALL_ORIGINS = True
 else:
-    CORS_ALLOW_ALL_ORIGINS = os.getenv("CORS_ALLOW_ALL_ORIGINS", "").split(',')
+    CORS_ALLOWED_ORIGINS = os.getenv("CORS_ALLOWED_ORIGINS", "").split(',')
+    

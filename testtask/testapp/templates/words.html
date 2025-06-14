@@ -5,9 +5,11 @@
 <head>
     <title>TF-IDF</title>
     <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    <meta name="csrf-token" content="{{ csrf_token }}">
 </head>
 <body>
     <h1>Статистика по документу {{ document.id }}</h1>
+    {% csrf_token %}
 <table border="1">
     <thead>
         <tr>

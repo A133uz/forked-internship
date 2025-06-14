@@ -45,8 +45,7 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
 # Ensure entrypoint script is executable
 RUN chmod +x /app/entrypoint.prod.sh
 
-# Switch to non-root user
-USER appuser
+
 
 # Expose application port
 EXPOSE 8000
