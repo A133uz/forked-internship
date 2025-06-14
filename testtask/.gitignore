@@ -3,6 +3,7 @@
 .venv
 ..venv/
 /venv/
+./nginx/ssl/
 
 db.sqlite3
 media/uploads
